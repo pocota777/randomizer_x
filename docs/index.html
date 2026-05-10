@@ -390,12 +390,12 @@
             }
             /* Hide most dummy blocks, but keep a few for aesthetic flavor */
             .block:not(.input-block) { display: none; }
-            .block:nth-child(5),
-            .block:nth-child(6),
+            .block:nth-child(2),
+            .block:nth-child(3),
             .block:nth-child(13),
-            .block:nth-child(19),
-            .block:nth-child(20),
-            .block:nth-child(21) {
+            .block:nth-child(18),
+            .block:nth-child(28),
+            .block:nth-child(29) {
                 display: flex;
             }
             .block {
@@ -494,7 +494,18 @@
         const MAX_CHARS = 10;
         
         let items = ["ITEM_01", "ITEM_02", "ITEM_03", "ITEM_04", "ITEM_05", "ITEM_06", "ITEM_07", "ITEM_08", "ITEM_09", "ITEM_10"];
-        let inputIndices = [7, 8, 9, 10, 11, 13, 14, 15, 16, 17]; 
+        
+        function getRandomInputIndices() {
+            // Inner blocks of a 6x5 grid (avoiding top/bottom rows and left/right cols)
+            const innerPool = [7, 8, 9, 10, 13, 14, 15, 16, 19, 20, 21, 22];
+            let shuffled = innerPool.slice();
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, 10).sort((a, b) => a - b);
+        }
+        let inputIndices = getRandomInputIndices(); 
 
         const gridContainer = document.getElementById('grid');
 
