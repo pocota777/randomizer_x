@@ -60,16 +60,6 @@
             z-index: 1001;
         }
 
-        .distressed-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 2;
-            background: 
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.5' numOctaves='2' result='noise'/%3E%3CfeComponentTransfer in='noise'%3E%3CfeFuncR type='discrete' tableValues='0 1'/%3E%3CfeFuncG type='discrete' tableValues='0 1'/%3E%3CfeFuncB type='discrete' tableValues='0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-            mix-blend-mode: color-dodge;
-            opacity: 0.15;
-        }
 
         /* --- Main Frame --- */
         .main-frame {
@@ -82,8 +72,22 @@
             flex-direction: column;
             justify-content: center;
             padding: 40px;
-            background: radial-gradient(circle at center, #0a0e14 0%, #030406 100%);
+            background: radial-gradient(circle at center, #050505 0%, #000000 100%);
             overflow: hidden;
+        }
+
+        .glitch-bg-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            mix-blend-mode: screen;
+        }
+
+        .glitch-block {
+            position: absolute;
+            /* width, height, top, left, and background are set via JS */
         }
 
         /* --- Sidebars --- */
@@ -103,6 +107,163 @@
         .sidebar h4 { color: var(--mint-green); font-size: 11px; margin-bottom: 5px; letter-spacing: 1px; }
 
         /* --- Warning Panel --- */
+        .warning-bar {
+            margin-top: 5px;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, var(--warning-red) 0, var(--warning-red) 5px, transparent 5px, transparent 10px);
+            opacity: 0.5;
+        }
+
+        /* --- Sys Panel (Bottom Right) --- */
+        .sys-panel {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            border: 1px solid rgba(168, 255, 218, 0.1);
+            padding: 12px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            font-family: var(--font-mono);
+            color: rgba(168, 255, 218, 0.5);
+            font-size: 9px;
+            line-height: 1.8;
+            letter-spacing: 1px;
+            z-index: 50;
+        }
+
+        .sys-panel::before, .sys-panel::after {
+            content: ""; position: absolute;
+            width: 6px; height: 6px;
+            border: 1px solid var(--mint-green);
+            opacity: 0.8;
+        }
+        .sys-panel::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .sys-panel::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+        
+        .sys-panel .corners::before {
+            content: ""; position: absolute;
+            top: -1px; right: -1px;
+            width: 6px; height: 6px;
+            border: 1px solid var(--mint-green);
+            border-left: none; border-bottom: none;
+            opacity: 0.8;
+        }
+        .sys-panel .corners::after {
+            content: ""; position: absolute;
+            bottom: -1px; left: -1px;
+            width: 6px; height: 6px;
+            border: 1px solid var(--mint-green);
+            border-right: none; border-top: none;
+            opacity: 0.8;
+        }
+
+        .sys-panel-header {
+            color: var(--mint-green);
+            font-size: 11px;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .sys-barcode {
+            margin-top: 10px;
+            height: 12px;
+            width: 120px;
+            background: 
+                repeating-linear-gradient(to right, var(--mint-green) 0, var(--mint-green) 1px, transparent 1px, transparent 3px),
+                repeating-linear-gradient(to right, var(--mint-green) 0, var(--mint-green) 2px, transparent 2px, transparent 5px),
+                repeating-linear-gradient(to right, var(--mint-green) 0, var(--mint-green) 3px, transparent 3px, transparent 7px);
+            background-size: 19px 100%, 37px 100%, 43px 100%;
+            opacity: 0.6;
+        }
+
+        /* --- Data Stream Panel (Bottom Left) --- */
+        .data-stream-panel {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            border: 1px solid rgba(168, 255, 218, 0.1);
+            padding: 12px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            font-family: var(--font-mono);
+            color: rgba(168, 255, 218, 0.5);
+            font-size: 9px;
+            line-height: 1.8;
+            letter-spacing: 1px;
+            z-index: 50;
+            width: 140px;
+        }
+
+        .data-stream-panel::before, .data-stream-panel::after {
+            content: ""; position: absolute;
+            width: 6px; height: 6px;
+            border: 1px solid var(--mint-green);
+            opacity: 0.8;
+        }
+        .data-stream-panel::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .data-stream-panel::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+        .data-stream-panel .dsp-corners::before {
+            content: ""; position: absolute;
+            top: -1px; right: -1px;
+            width: 6px; height: 6px;
+            border: 1px solid var(--mint-green);
+            border-left: none; border-bottom: none;
+            opacity: 0.8;
+        }
+        .data-stream-panel .dsp-corners::after {
+            content: ""; position: absolute;
+            bottom: -1px; left: -1px;
+            width: 6px; height: 6px;
+            border: 1px solid var(--mint-green);
+            border-right: none; border-top: none;
+            opacity: 0.8;
+        }
+
+        .dsp-header {
+            color: var(--mint-green);
+            font-size: 11px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .dsp-waveform {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 28px;
+            width: 100%;
+        }
+
+        .dsp-bar {
+            flex: 1;
+            background: var(--mint-green);
+            opacity: 0.6;
+            animation: dsp-wave 1.2s ease-in-out infinite alternate;
+            min-height: 2px;
+        }
+
+        .dsp-bar:nth-child(1)  { animation-delay: 0.0s; height: 30%; }
+        .dsp-bar:nth-child(2)  { animation-delay: 0.1s; height: 70%; }
+        .dsp-bar:nth-child(3)  { animation-delay: 0.2s; height: 45%; }
+        .dsp-bar:nth-child(4)  { animation-delay: 0.05s; height: 90%; }
+        .dsp-bar:nth-child(5)  { animation-delay: 0.3s; height: 55%; }
+        .dsp-bar:nth-child(6)  { animation-delay: 0.15s; height: 35%; }
+        .dsp-bar:nth-child(7)  { animation-delay: 0.25s; height: 80%; }
+        .dsp-bar:nth-child(8)  { animation-delay: 0.35s; height: 50%; }
+        .dsp-bar:nth-child(9)  { animation-delay: 0.08s; height: 65%; }
+        .dsp-bar:nth-child(10) { animation-delay: 0.18s; height: 40%; }
+        .dsp-bar:nth-child(11) { animation-delay: 0.28s; height: 75%; }
+        .dsp-bar:nth-child(12) { animation-delay: 0.38s; height: 20%; }
+        .dsp-bar:nth-child(13) { animation-delay: 0.12s; height: 60%; }
+        .dsp-bar:nth-child(14) { animation-delay: 0.22s; height: 85%; }
+        .dsp-bar:nth-child(15) { animation-delay: 0.32s; height: 42%; }
+        .dsp-bar:nth-child(16) { animation-delay: 0.42s; height: 58%; }
+
+        @keyframes dsp-wave {
+            0%   { transform: scaleY(0.3); opacity: 0.4; }
+            100% { transform: scaleY(1.0); opacity: 0.8; }
+        }
+
+        /* --- Hexagon Block Grid --- */
+
         .warning-panel {
             margin-top: 15px;
             padding: 8px;
@@ -174,11 +335,81 @@
             0% { left: -30%; }
             100% { left: 100%; }
         }
+        /* --- Log Panel (Left Middle) --- */
+        .log-panel {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 155px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: rgba(168, 255, 218, 0.9);
+            line-height: 2;
+            letter-spacing: 1px;
+            z-index: 50;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .log-panel h5 {
+            color: var(--mint-green);
+            font-size: 11px;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .log-panel .log-entry { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .log-panel .log-entry.fade-1 { opacity: 0.7; }
+        .log-panel .log-entry.fade-2 { opacity: 0.4; }
+        .log-panel .log-entry.fade-3 { opacity: 0.15; }
+        .log-panel .log-entry.fade-4 { opacity: 0.06; }
+
+        .log-mini-blocks {
+            margin-top: 14px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+        }
+
+        .log-mini-block {
+            height: 36px;
+            background: rgba(168, 255, 218, 0.02);
+            border: 1px solid rgba(168, 255, 218, 0.18);
+            position: relative;
+        }
+
+        .log-mini-block.active-mini {
+            background: rgba(255, 0, 50, 0.06);
+            border-color: rgba(255, 0, 50, 0.5);
+            box-shadow: 0 0 6px rgba(255, 0, 50, 0.2), inset 0 0 8px rgba(255, 0, 50, 0.05);
+        }
+
+        .log-mini-block.cyan-mini {
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 255, 255, 0.03) 0,
+                rgba(0, 255, 255, 0.03) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+            border-color: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.15), inset 0 0 10px rgba(0, 255, 255, 0.04);
+        }
+
+        .log-red-bar {
+            margin-top: 8px;
+            height: 3px;
+            width: 80%;
+            background: linear-gradient(to right, rgba(255,0,60,0.6), rgba(255,0,60,0.1));
+        }
+
         /* --- Header Section --- */
         .header {
+            position: relative;
+            z-index: 10;
             text-align: center;
             margin-bottom: 4vh;
-            z-index: 100;
         }
 
         .protocol-label {
@@ -235,6 +466,8 @@
 
         /* --- Grid Area --- */
         .grid-wrapper {
+            position: relative;
+            z-index: 10;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -349,27 +582,91 @@
         .delete-btn::before { transform: rotate(45deg); }
         .delete-btn::after { transform: rotate(-45deg); }
 
-        /* --- Footer --- */
-        .footer { text-align: center; padding: 4vh 0; position: relative; }
-        .execute-label { font-family: var(--font-mono); font-size: 10px; color: var(--mint-green); letter-spacing: 3px; margin-bottom: 8px; opacity: 0.8; }
-        .start-btn-wrap { display: inline-block; position: relative; padding: 5px; border: 1px solid rgba(168, 255, 218, 0.3); }
+        /* --- Footer / Start Button --- */
+        .footer { position: relative; z-index: 10; text-align: center; padding: 4vh 0; }
+        .execute-label { font-family: var(--font-mono); font-size: 10px; color: var(--mint-green); letter-spacing: 3px; margin-bottom: 10px; opacity: 0.8; }
 
-        .start-btn {
-            background-color: var(--mint-green);
-            color: #000;
-            padding: 12px 60px;
-            font-family: var(--font-cyber);
-            font-weight: 900;
-            font-size: 1.2rem;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 0 25px var(--mint-glow);
-            transition: all 0.3s;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        .start-btn-wrap {
+            display: inline-block;
+            position: relative;
+            padding: 8px;
+            border: 1px solid rgba(168, 255, 218, 0.4);
+            background: rgba(0,0,0,0.5);
         }
 
-        .start-btn.disabled { background-color: #222; color: #444; box-shadow: none; cursor: not-allowed; clip-path: none; }
-        .start-btn:not(.disabled):hover { transform: scale(1.05); box-shadow: 0 0 40px var(--mint-green); }
+        /* Outer frame corner brackets */
+        .start-btn-wrap::before, .start-btn-wrap::after {
+            content: ""; position: absolute;
+            width: 10px; height: 10px;
+            border: 2px solid var(--mint-green);
+        }
+        .start-btn-wrap::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .start-btn-wrap::after  { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+        .start-btn-wrap .btn-corner-tr, .start-btn-wrap .btn-corner-bl {
+            position: absolute;
+            width: 10px; height: 10px;
+            border: 2px solid rgba(255, 0, 100, 0.7);
+        }
+        .start-btn-wrap .btn-corner-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+        .start-btn-wrap .btn-corner-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+
+        .start-btn {
+            position: relative;
+            overflow: hidden;
+            background: var(--mint-green);
+            color: #000;
+            padding: 14px 80px;
+            font-family: var(--font-cyber);
+            font-weight: 900;
+            font-size: 1.35rem;
+            letter-spacing: 4px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 30px rgba(168, 255, 218, 0.6), inset 0 0 20px rgba(255,255,255,0.15);
+            transition: all 0.3s;
+            clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+        }
+
+        /* Noise texture overlay on button */
+        .start-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            mix-blend-mode: multiply;
+            opacity: 0.25;
+        }
+
+        /* Hazard stripes at bottom of button */
+        .start-btn::after {
+            content: "";
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 6px;
+            background: repeating-linear-gradient(
+                -45deg,
+                rgba(0,0,0,0.5) 0px,
+                rgba(0,0,0,0.5) 4px,
+                transparent 4px,
+                transparent 8px
+            );
+            pointer-events: none;
+        }
+
+        .start-btn.disabled {
+            background: #1a1a1a;
+            color: #444;
+            box-shadow: none;
+            cursor: not-allowed;
+            clip-path: none;
+        }
+        .start-btn.disabled::before, .start-btn.disabled::after { display: none; }
+        .start-btn:not(.disabled):hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 60px rgba(168, 255, 218, 0.9), inset 0 0 30px rgba(255,255,255,0.25);
+        }
 
         /* Animation States */
         .block.active { background-color: white !important; z-index: 200; }
@@ -444,15 +741,29 @@
                 padding: 10px 40px;
                 font-size: 1.1rem;
             }
+            /* Hide all decorative panels on mobile */
+            .sidebar,
+            .log-panel,
+            .sys-panel,
+            .data-stream-panel,
+            .glitch-bg-layer,
+            .warning-panel {
+                display: none !important;
+            }
+            /* Ensure grid wrapper has no side padding on mobile */
+            .main-frame {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="scanlines"></div>
     <div class="overlay-noise"></div>
-    <div class="distressed-overlay"></div>
     
     <div class="main-frame">
+        <div id="glitch-bg-layer" class="glitch-bg-layer"></div>
         <div class="sidebar left">
             <h4>SYSTEM STATUS</h4>
             SYS:// ACTIVE<br>
@@ -483,6 +794,48 @@
             > STANDBY...
         </div>
 
+        <div class="log-panel">
+            <h5>// LOG</h5>
+            <span class="log-entry">> INITIALIZING...</span>
+            <span class="log-entry fade-1">> LOADING NODES...</span>
+            <span class="log-entry fade-2">> SCANNING DATABASE...</span>
+            <span class="log-entry fade-2">> FOOD DATA FOUND</span>
+            <span class="log-entry fade-3">> RANDOMIZER READY</span>
+            <span class="log-entry fade-4">> STANDBY</span>
+            <div class="log-red-bar"></div>
+        </div>
+
+        <div class="sys-panel">
+            <span class="corners"></span>
+            <div class="sys-panel-header">PROTOCOL</div>
+            VER.2.71<br>
+            BUILD. 230517
+            <div class="sys-barcode"></div>
+        </div>
+
+        <div class="data-stream-panel">
+            <span class="dsp-corners"></span>
+            <div class="dsp-header">// DATA STREAM</div>
+            <div class="dsp-waveform">
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+                <div class="dsp-bar"></div>
+            </div>
+        </div>
+
         <div class="header">
             <div class="protocol-label">RANDOM SELECTION PROTOCOL</div>
             <div class="glitch-wrap">
@@ -500,6 +853,8 @@
         <div class="footer">
             <div class="execute-label">// EXECUTE RANDOMIZER</div>
             <div class="start-btn-wrap">
+                <span class="btn-corner-tr"></span>
+                <span class="btn-corner-bl"></span>
                 <button class="start-btn" id="start-btn">START</button>
             </div>
         </div>
@@ -706,7 +1061,47 @@
             playWin();
         }
 
+        function generateBackgroundBlocks() {
+            const layer = document.getElementById('glitch-bg-layer');
+            if (!layer) return;
+            layer.innerHTML = '';
+            
+            const colors = [
+                'rgba(0, 255, 255, 0.1)',  // Cyan
+                'rgba(0, 255, 255, 0.15)', // Stronger cyan
+                'rgba(255, 0, 255, 0.08)', // Magenta
+                'rgba(255, 0, 255, 0.12)', // Stronger magenta
+                'rgba(255, 255, 255, 0.05)'// White
+            ];
+
+            const numBlocks = 15 + Math.floor(Math.random() * 15);
+
+            for (let i = 0; i < numBlocks; i++) {
+                const block = document.createElement('div');
+                block.className = 'glitch-block';
+                
+                const isHorizontal = Math.random() > 0.3;
+                let width, height;
+                if (isHorizontal) {
+                    width = 5 + Math.random() * 25; 
+                    height = 0.5 + Math.random() * 3; 
+                } else {
+                    width = 0.5 + Math.random() * 3; 
+                    height = 5 + Math.random() * 20; 
+                }
+
+                block.style.width = `${width}%`;
+                block.style.height = `${height}%`;
+                block.style.top = `${Math.random() * 100}%`;
+                block.style.left = `${Math.random() * 100}%`;
+                block.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                layer.appendChild(block);
+            }
+        }
+
         init();
+        generateBackgroundBlocks();
     </script>
 </body>
 </html>
