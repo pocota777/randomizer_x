@@ -85,10 +85,82 @@
             z-index: 50;
         }
 
-        .sidebar.left { top: 40px; left: 20px; width: 140px; }
-        .sidebar.right { top: 40px; right: 20px; width: 140px; text-align: right; }
+        .sidebar.left { top: 40px; left: 20px; width: 160px; }
+        .sidebar.right { top: 40px; right: 20px; width: 160px; text-align: right; }
         .sidebar h4 { color: var(--mint-green); font-size: 11px; margin-bottom: 5px; letter-spacing: 1px; }
 
+        /* --- Warning Panel --- */
+        .warning-panel {
+            margin-top: 15px;
+            padding: 8px;
+            position: relative;
+            color: var(--warning-red);
+            text-shadow: 0 0 5px rgba(255, 0, 60, 0.5);
+            background: rgba(20, 0, 0, 0.4);
+            border: 1px solid rgba(255, 0, 60, 0.1);
+        }
+
+        .warning-panel::before, .warning-panel::after {
+            content: ""; position: absolute; width: 6px; height: 6px;
+            border-color: var(--warning-red); border-style: solid;
+        }
+        .warning-panel::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+        .warning-panel::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+        .warning-corners::before, .warning-corners::after {
+            content: ""; position: absolute; width: 6px; height: 6px;
+            border-color: var(--warning-red); border-style: solid;
+        }
+        .warning-corners::before { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+        .warning-corners::after { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+
+        .warning-header {
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: 1px;
+        }
+
+        .warning-icon {
+            font-size: 14px;
+            animation: blink-warning 1.5s infinite;
+        }
+
+        .warning-text {
+            font-size: 8px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .warning-bar {
+            height: 3px;
+            background: rgba(255, 0, 60, 0.2);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .warning-bar::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; height: 100%;
+            background: var(--warning-red);
+            width: 30%;
+            animation: loading-bar 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes blink-warning {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--warning-red); }
+            50% { opacity: 0.3; text-shadow: none; }
+        }
+        @keyframes loading-bar {
+            0% { left: -30%; }
+            100% { left: 100%; }
+        }
         /* --- Header Section --- */
         .header {
             text-align: center;
@@ -153,7 +225,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 0 5vw;
+            padding: 0 190px;
             overflow: hidden;
             width: 100%;
         }
@@ -302,6 +374,59 @@
             .sidebar { display: none; }
             .title-text { font-size: 8vw; }
             .main-frame { padding: 20px; }
+            .grid-wrapper { padding: 0 5vw; }
+        }
+
+        /* Mobile specific grid adjustments */
+        @media (max-width: 600px) {
+            .title-text { font-size: 10vw; letter-spacing: 0; }
+            .subtitle-text { font-size: 0.6rem; }
+            .header { margin-bottom: 2vh; }
+            .footer { padding: 2vh 0; }
+            .grid-wrapper { padding: 0; }
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            /* Hide most dummy blocks, but keep a few for aesthetic flavor */
+            .block:not(.input-block) { display: none; }
+            .block:nth-child(5),
+            .block:nth-child(6),
+            .block:nth-child(13),
+            .block:nth-child(19),
+            .block:nth-child(20),
+            .block:nth-child(21) {
+                display: flex;
+            }
+            .block {
+                min-width: 0;
+                height: 45px;
+                clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+            }
+            .block-inner {
+                clip-path: polygon(7px 0, calc(100% - 7px) 0, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0 calc(100% - 7px), 0 7px);
+            }
+            .block::before { top: 8px; left: 8px; width: 3px; height: 3px; }
+            .block::after { bottom: 8px; right: 8px; width: 3px; height: 3px; }
+            .editable-area {
+                font-size: 11px;
+                padding: 5px 12px;
+            }
+            .id-tag {
+                left: 10px;
+                bottom: 3px;
+                font-size: 7px;
+            }
+            .delete-btn {
+                top: 4px;
+                right: 4px;
+                width: 12px;
+                height: 12px;
+            }
+            .start-btn {
+                padding: 10px 40px;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -317,6 +442,18 @@
             CORE: STABLE<br>
             TEMP: 36.2°C<br>
             POWER: 98%<br>
+            
+            <div class="warning-panel">
+                <div class="warning-corners"></div>
+                <div class="warning-header">
+                    <span class="warning-icon">⚠</span> WARNING
+                </div>
+                <div class="warning-text">
+                    UNSTABLE SIGNAL<br>
+                    BIAS LEVEL HIGH
+                </div>
+                <div class="warning-bar"></div>
+            </div>
         </div>
 
         <div class="sidebar right">
