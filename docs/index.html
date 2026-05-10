@@ -381,28 +381,32 @@
 
         /* Mobile specific grid adjustments */
         @media (max-width: 600px) {
-            .title-text { font-size: 10vw; letter-spacing: 0; }
+            .main-frame {
+                justify-content: flex-start;
+                padding-top: 40px;
+                overflow-y: auto;
+            }
+            .main-frame::-webkit-scrollbar { display: none; }
+            .title-text { font-size: 9vw; letter-spacing: 0; }
             .subtitle-text { font-size: 0.6rem; }
             .header { margin-bottom: 2vh; }
-            .footer { padding: 2vh 0; }
+            .footer { padding: 2vh 0; margin-top: auto; margin-bottom: 20px; }
             .grid-wrapper { padding: 0; }
             .grid-container {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
+                gap: 4px;
             }
             /* Hide most dummy blocks, but keep a few for aesthetic flavor */
             .block:not(.input-block) { display: none; }
             .block:nth-child(2),
             .block:nth-child(3),
-            .block:nth-child(13),
-            .block:nth-child(18),
             .block:nth-child(28),
             .block:nth-child(29) {
                 display: flex;
             }
             .block {
                 min-width: 0;
-                height: 45px;
+                height: 40px;
                 clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
             }
             .block-inner {
