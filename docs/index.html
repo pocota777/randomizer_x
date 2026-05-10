@@ -227,7 +227,7 @@
             left: 20px;
             font-family: var(--font-mono);
             font-size: 8px;
-            color: rgba(168, 255, 218, 0.2);
+            color: rgba(168, 255, 218, 0.4); /* Brighter ID tag */
         }
 
         /* --- Cursor Logic --- */
@@ -241,7 +241,12 @@
         .grid-container.is-playing .editable-area::after { display: none !important; }
 
         @keyframes cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .editable-area:empty:not(:focus)::before { content: "> TYPE_"; color: #333; letter-spacing: 1px; }
+        /* Improved Visibility Placeholder */
+        .editable-area:empty:not(:focus)::before { 
+            content: "> TYPE_"; 
+            color: rgba(168, 255, 218, 0.45); 
+            letter-spacing: 1px; 
+        }
 
         .delete-btn {
             position: absolute;
@@ -317,8 +322,8 @@
         <div class="sidebar right">
             <h4>// LOG</h4>
             > INITIALIZING...<br>
-            > UPDATING TITLE...<br>
-            > RANDOMIZER_X: OK<br>
+            > REFINING HUD...<br>
+            > OPTIMIZING VISIBILITY...<br>
             > DATA ACQUIRED<br>
             > STANDBY...
         </div>
@@ -346,7 +351,7 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'tile_roulette_randomizer_x_v32';
+        const STORAGE_KEY = 'tile_roulette_randomizer_x_v33';
         const MIN_ENTRIES = 5;
         const MAX_ENTRIES = 10;
         const MAX_CHARS = 10;
