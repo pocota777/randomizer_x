@@ -1,944 +1,540 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>flower roulette</title>
-    <!-- Google Fonts -->
+    <title>RANDOMIZER_X | PROTOCOL</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #fff9f0;
-            --primary-pink: #ffdae9;
-            --primary-mint: #d4f5e9;
-            --primary-lavender: #e6e6ff;
-            --primary-yellow: #fff3b0;
-            --text-color: #5a4a42;
-            --accent-color: #ff9fb2;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            --bg-color: #050505;
+            --block-color: rgba(22, 22, 22, 0.8);
+            --mint-green: #a8ffda;
+            --neon-pink: #ff2df0;
+            --warning-red: #ff003c;
+            --mint-glow: rgba(168, 255, 218, 0.7);
+            --pink-glow: rgba(255, 45, 240, 0.9);
+            --font-cyber: 'Orbitron', sans-serif;
+            --font-mono: 'Share Tech Mono', monospace;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         body {
-            font-family: 'Zen Maru Gothic', sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 218, 233, 0.3) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(212, 245, 233, 0.3) 0%, transparent 20%);
-        }
-
-        header {
-            padding: 40px 20px 20px;
-            text-align: center;
-            width: 100%;
-        }
-
-        h1 {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 3.5rem;
-            color: var(--accent-color);
-            text-shadow: 2px 2px 0px white, 4px 4px 0px rgba(255, 159, 178, 0.2);
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            padding: 0 20px 40px;
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 40px;
-            z-index: 10;
-            align-items: stretch;
-        }
-
-        .left-panel {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-        }
-
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            height: 100%;
-        }
-
-        /* --- Settings & Controls --- */
-        .sound-toggle-container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-        }
-
-        .icon-btn {
-            background: var(--card-bg);
-            border: 2px solid white;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-size: 1.5rem;
-        }
-
-        .icon-btn:hover {
-            transform: scale(1.1);
-            background: white;
-        }
-
-        /* --- Input Section --- */
-        .input-section {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 25px;
-            width: 100%;
-            height: 100%;
-            box-shadow: var(--shadow);
-            border: 3px solid white;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .input-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .input-header h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .items-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex: 1;
-        }
-
-        .item-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .item-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid transparent;
-            border-radius: 15px;
-            background: white;
-            font-family: inherit;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.3s;
-            color: var(--text-color);
-        }
-
-        .item-input:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 4px rgba(255, 159, 178, 0.1);
-        }
-
-        .remove-btn {
-            position: absolute;
-            right: 8px;
-            background: #eee;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #999;
-            transition: all 0.2s;
-        }
-
-        .remove-btn:hover {
-            background: var(--accent-color);
             color: white;
-        }
-
-        .add-btn {
-            background: white;
-            border: 2px dashed #ddd;
-            border-radius: 15px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
+            font-family: var(--font-cyber);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             display: flex;
-            align-items: center;
             justify-content: center;
-            color: #999;
-            font-weight: 700;
+            align-items: center;
         }
 
-        .add-btn:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-            background: rgba(255, 159, 178, 0.05);
+        /* --- Global Overlays --- */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 1000;
         }
 
-        /* --- Roulette Section --- */
-        .roulette-container {
+        .overlay-noise {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        /* --- Main Frame --- */
+        .main-frame {
             position: relative;
-            width: 100%;
-            max-width: 450px;
-            aspect-ratio: 1;
+            width: 98vw;
+            height: 96vh;
+            border: 1px solid rgba(168, 255, 218, 0.15);
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: center;
+            padding: 40px;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #050505 100%);
+            overflow: hidden;
         }
 
-        #roulette-canvas {
-            width: 100%;
-            height: 100%;
-            cursor: default;
-        }
-
-        .pointer {
+        /* --- Sidebars --- */
+        .sidebar {
             position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 40px;
-            z-index: 20;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-        }
-
-        .pointer svg {
-            width: 100%;
-            height: 100%;
-            fill: var(--accent-color);
-        }
-
-        /* --- Action Section --- */
-        .action-section {
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .spin-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 18px 60px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(255, 159, 178, 0.4);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-family: 'Zen Maru Gothic', sans-serif;
-        }
-
-        .spin-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(255, 159, 178, 0.5);
-        }
-
-        .spin-btn:active {
-            transform: translateY(0) scale(0.95);
-        }
-
-        .spin-btn:disabled {
-            background: #ddd;
-            box-shadow: none;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* --- Result Overlay --- */
-        .result-overlay {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            background: white;
-            padding: 30px 60px;
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-            z-index: 100;
-            text-align: center;
-            opacity: 0;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: rgba(168, 255, 218, 0.4);
+            line-height: 1.4;
             pointer-events: none;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 4px solid var(--primary-yellow);
-        }
-
-        .result-overlay.active {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 2rem;
-            color: #ccc;
-            cursor: pointer;
-            transition: color 0.3s;
-            line-height: 1;
-        }
-
-        .close-btn:hover {
-            color: var(--accent-color);
-        }
-
-        .result-label {
-            font-size: 0.9rem;
-            color: #999;
-            margin-bottom: 5px;
-        }
-
-        .result-text {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        /* --- Flower Particles --- */
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+            text-transform: uppercase;
             z-index: 50;
         }
 
+        .sidebar.left { top: 40px; left: 20px; width: 140px; }
+        .sidebar.right { top: 40px; right: 20px; width: 140px; text-align: right; }
+        .sidebar h4 { color: var(--mint-green); font-size: 11px; margin-bottom: 5px; letter-spacing: 1px; }
+
+        /* --- Header Section --- */
+        .header {
+            text-align: center;
+            margin-bottom: 4vh;
+            z-index: 100;
+        }
+
+        .protocol-label {
+            font-size: 0.7rem;
+            color: var(--neon-pink);
+            letter-spacing: 8px;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .title-text {
+            position: relative;
+            font-weight: 900;
+            font-size: 4vw;
+            color: var(--neon-pink);
+            text-shadow: 0 0 20px var(--pink-glow);
+            letter-spacing: 2px;
+            display: inline-block;
+        }
+
+        .glitch-wrap { position: relative; display: inline-block; }
+        .title-text::before, .title-text::after {
+            content: "RANDOMIZER_X";
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent;
+        }
+        .title-text::before { color: var(--neon-pink); left: 2px; text-shadow: -2px 0 #ff00c1; animation: glitch-anim 2s infinite linear alternate-reverse; }
+        .title-text::after { color: #00fff9; left: -2px; text-shadow: -2px 0 #00fff9; animation: glitch-anim2 3s infinite linear alternate-reverse; }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(44px, 600px, 56px, 0); }
+            20% { clip: rect(12px, 600px, 98px, 0); }
+            40% { clip: rect(67px, 600px, 23px, 0); }
+            60% { clip: rect(3px, 600px, 88px, 0); }
+            80% { clip: rect(90px, 600px, 12px, 0); }
+            100% { clip: rect(34px, 600px, 78px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(12px, 600px, 45px, 0); }
+            20% { clip: rect(78px, 600px, 12px, 0); }
+            40% { clip: rect(23px, 600px, 89px, 0); }
+            60% { clip: rect(67px, 600px, 3px, 0); }
+            80% { clip: rect(45px, 600px, 90px, 0); }
+            100% { clip: rect(2px, 600px, 12px, 0); }
+        }
+
+        .subtitle-text {
+            font-size: 0.8rem;
+            color: var(--mint-green);
+            letter-spacing: 3px;
+            margin-top: 5px;
+            opacity: 0.6;
+        }
+
+        /* --- Grid Area --- */
+        .grid-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 5vw;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- Chamfered Block --- */
+        .block {
+            position: relative;
+            height: 75px;
+            min-width: 180px;
+            clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+            background: rgba(168, 255, 218, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .block-inner {
+            position: absolute;
+            top: 1px; left: 1px; right: 1px; bottom: 1px;
+            background: var(--block-color);
+            clip-path: polygon(11px 0, calc(100% - 11px) 0, 100% 11px, 100% calc(100% - 11px), calc(100% - 11px) 100%, 11px 100%, 0 calc(100% - 11px), 0 11px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .block::before, .block::after {
+            content: "";
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--mint-green);
+            z-index: 20;
+            box-shadow: 0 0 5px var(--mint-green);
+        }
+        .block::before { top: 15px; left: 15px; border-radius: 50%; }
+        .block::after { bottom: 15px; right: 15px; border-radius: 1px; }
+
+        .block.input-block .block-inner { background: rgba(15, 25, 25, 0.8); cursor: pointer; }
+        .block.input-block:hover { background: var(--mint-green); box-shadow: 0 0 15px var(--mint-glow); }
+
+        .editable-area {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--mint-green);
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            outline: none;
+            padding: 5px 30px; 
+            z-index: 10;
+        }
+
+        .id-tag {
+            position: absolute;
+            bottom: 4px;
+            left: 20px;
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: rgba(168, 255, 218, 0.2);
+        }
+
+        /* --- Cursor Logic --- */
+        .editable-area::after {
+            content: "|";
+            margin-left: 2px;
+            animation: cursor-blink 1.2s step-end infinite;
+        }
+        .editable-area:focus::after { content: ""; }
+        .editable-area:empty::after { content: ""; }
+        .grid-container.is-playing .editable-area::after { display: none !important; }
+
+        @keyframes cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .editable-area:empty:not(:focus)::before { content: "> TYPE_"; color: #333; letter-spacing: 1px; }
+
+        .delete-btn {
+            position: absolute;
+            top: 8px; right: 12px;
+            width: 14px; height: 14px;
+            color: rgba(255, 45, 240, 0.4);
+            display: none;
+            align-items: center; justify-content: center;
+            z-index: 150; cursor: pointer;
+        }
+        .block.input-block:hover .delete-btn { display: flex; }
+        .delete-btn::before, .delete-btn::after {
+            content: ""; position: absolute; width: 2px; height: 10px; background: currentColor;
+        }
+        .delete-btn::before { transform: rotate(45deg); }
+        .delete-btn::after { transform: rotate(-45deg); }
+
+        /* --- Footer --- */
+        .footer { text-align: center; padding: 4vh 0; position: relative; }
+        .execute-label { font-family: var(--font-mono); font-size: 10px; color: var(--mint-green); letter-spacing: 3px; margin-bottom: 8px; opacity: 0.8; }
+        .start-btn-wrap { display: inline-block; position: relative; padding: 5px; border: 1px solid rgba(168, 255, 218, 0.3); }
+
+        .start-btn {
+            background-color: var(--mint-green);
+            color: #000;
+            padding: 12px 60px;
+            font-family: var(--font-cyber);
+            font-weight: 900;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 25px var(--mint-glow);
+            transition: all 0.3s;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        .start-btn.disabled { background-color: #222; color: #444; box-shadow: none; cursor: not-allowed; clip-path: none; }
+        .start-btn:not(.disabled):hover { transform: scale(1.05); box-shadow: 0 0 40px var(--mint-green); }
+
+        /* Animation States */
+        .block.active { background-color: white !important; z-index: 200; }
+        .block.active .block-inner { background: var(--mint-green) !important; }
+        .block.active .editable-area { color: #000 !important; }
+        .block.active::before, .block.active::after { background: #000; }
+
+        .block.winner { background-color: white !important; box-shadow: 0 0 70px var(--mint-green); animation: winner-pulse 0.8s infinite; z-index: 300; }
+        .block.winner .block-inner { background: var(--mint-green) !important; }
+        .block.winner .editable-area { color: #000 !important; }
+
+        @keyframes winner-pulse { 0%, 100% { transform: scale(1.05); } 50% { transform: scale(1.1); box-shadow: 0 0 100px var(--mint-green); } }
+
         @media (max-width: 900px) {
-            h1 { font-size: 2.5rem; }
-            .container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .left-panel { order: 1; }
-            .right-panel { order: 2; }
-            .items-list { flex-direction: row; flex-wrap: wrap; }
-            .item-input-wrapper { flex: 1 1 140px; }
-            .spin-btn { padding: 15px 40px; font-size: 1.2rem; }
+            .sidebar { display: none; }
+            .title-text { font-size: 8vw; }
+            .main-frame { padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="sound-toggle-container">
-        <button id="sound-toggle" class="icon-btn" title="Sound ON/OFF">🔊</button>
-    </div>
+    <div class="scanlines"></div>
+    <div class="overlay-noise"></div>
+    
+    <div class="main-frame">
+        <div class="sidebar left">
+            <h4>SYSTEM STATUS</h4>
+            SYS:// ACTIVE<br>
+            NODES: 10/10<br>
+            CORE: STABLE<br>
+            TEMP: 36.2°C<br>
+            POWER: 98%<br>
+        </div>
 
-    <header>
-        <h1>flower roulette</h1>
-    </header>
+        <div class="sidebar right">
+            <h4>// LOG</h4>
+            > INITIALIZING...<br>
+            > UPDATING TITLE...<br>
+            > RANDOMIZER_X: OK<br>
+            > DATA ACQUIRED<br>
+            > STANDBY...
+        </div>
 
-    <div class="container">
-        <div class="left-panel">
-            <div class="roulette-container">
-                <div class="pointer">
-                    <svg viewBox="0 0 30 40">
-                        <path d="M15 40 L30 10 Q30 0 15 0 Q0 0 0 10 Z" />
-                    </svg>
-                </div>
-                <canvas id="roulette-canvas"></canvas>
+        <div class="header">
+            <div class="protocol-label">RANDOM SELECTION PROTOCOL</div>
+            <div class="glitch-wrap">
+                <div class="title-text">RANDOMIZER_X</div>
             </div>
+            <div class="subtitle-text">ENTER 5 TO 10 OPTIONS</div>
+        </div>
 
-            <div class="action-section">
-                <button id="spin-btn" class="spin-btn">Start!</button>
+        <div class="grid-wrapper">
+            <div class="grid-container" id="grid">
+                <!-- Blocks generated here -->
             </div>
         </div>
 
-        <div class="right-panel">
-            <section class="input-section">
-                <div class="input-header">
-                    <h2>Enter items (4-10)</h2>
-                    <span id="item-count" style="font-size: 0.9rem; color: #999;">4 / 10</span>
-                </div>
-                <div id="items-container" class="items-list">
-                    <!-- Items will be injected here -->
-                </div>
-                <button id="add-item-btn" class="add-btn">+ Add item</button>
-            </section>
+        <div class="footer">
+            <div class="execute-label">// EXECUTE RANDOMIZER</div>
+            <div class="start-btn-wrap">
+                <button class="start-btn" id="start-btn">START</button>
+            </div>
         </div>
     </div>
-
-    <div id="result-overlay" class="result-overlay">
-        <button id="close-result-btn" class="close-btn">×</button>
-        <div class="result-label">Result...</div>
-        <div id="result-text" class="result-text">Item name</div>
-    </div>
-
-    <canvas id="particle-canvas"></canvas>
 
     <script>
-        // --- Constants & State ---
-        const ITEMS_MIN = 4;
-        const ITEMS_MAX = 10;
-        const PETAL_COLORS = [
-            '#ffdae9', // Pink
-            '#d4f5e9', // Mint
-            '#e6e6ff', // Lavender
-            '#fff3b0', // Yellow
-            '#ffebf2', // Light Pink
-            '#e0fff7', // Light Mint
-            '#f0f0ff', // Light Lavender
-            '#fffce0', // Light Yellow
-            '#ffd9d9', // Soft Red
-            '#d9f2ff'  // Soft Blue
-        ];
-
-        let items = ["Pizza", "Burger", "Sushi", "Pasta", "Salad", "Tacos"];
-        let isSpinning = false;
-        let soundEnabled = true;
-        let rotation = 0;
-        let currentVelocity = 0;
-        let targetRotation = 0;
-
-        // --- DOM Elements ---
-        const itemsContainer = document.getElementById('items-container');
-        const addItemBtn = document.getElementById('add-item-btn');
-        const itemCountSpan = document.getElementById('item-count');
-        const rouletteCanvas = document.getElementById('roulette-canvas');
-        const spinBtn = document.getElementById('spin-btn');
-        const soundToggle = document.getElementById('sound-toggle');
-        const resultOverlay = document.getElementById('result-overlay');
-        const closeResultBtn = document.getElementById('close-result-btn');
-        const resultText = document.getElementById('result-text');
-        const particleCanvas = document.getElementById('particle-canvas');
-
-        const ctx = rouletteCanvas.getContext('2d');
-        const pCtx = particleCanvas.getContext('2d');
-
-        // --- Initialization ---
-        function init() {
-            renderInputs();
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            drawRoulette();
-            
-            addItemBtn.addEventListener('click', addItem);
-            spinBtn.addEventListener('click', startSpin);
-            soundToggle.addEventListener('click', toggleSound);
-            
-            // Close result
-            closeResultBtn.addEventListener('click', () => {
-                resultOverlay.classList.remove('active');
-            });
-        }
-
-        function resizeCanvas() {
-            const size = Math.min(window.innerWidth * 0.9, 450);
-            rouletteCanvas.width = size * window.devicePixelRatio;
-            rouletteCanvas.height = size * window.devicePixelRatio;
-            rouletteCanvas.style.width = `${size}px`;
-            rouletteCanvas.style.height = `${size}px`;
-            
-            particleCanvas.width = window.innerWidth * window.devicePixelRatio;
-            particleCanvas.height = window.innerHeight * window.devicePixelRatio;
-            
-            drawRoulette();
-        }
-
-        // --- UI Logic ---
-        function renderInputs() {
-            itemsContainer.innerHTML = '';
-            items.forEach((item, index) => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'item-input-wrapper';
-                
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'item-input';
-                input.value = item;
-                input.maxLength = 10;
-                input.placeholder = `Item ${index + 1}`;
-                input.addEventListener('input', (e) => {
-                    items[index] = e.target.value;
-                    drawRoulette();
-                });
-
-                const removeBtn = document.createElement('button');
-                removeBtn.className = 'remove-btn';
-                removeBtn.innerHTML = '×';
-                removeBtn.addEventListener('click', () => removeItem(index));
-
-                wrapper.appendChild(input);
-                if (items.length > ITEMS_MIN) {
-                    wrapper.appendChild(removeBtn);
-                }
-                itemsContainer.appendChild(wrapper);
-            });
-
-            itemCountSpan.textContent = `${items.length} / ${ITEMS_MAX}`;
-            addItemBtn.style.display = items.length >= ITEMS_MAX ? 'none' : 'flex';
-            drawRoulette();
-        }
-
-        function addItem() {
-            if (items.length < ITEMS_MAX) {
-                items.push(`Item ${items.length + 1}`);
-                renderInputs();
-            }
-        }
-
-        function removeItem(index) {
-            if (items.length > ITEMS_MIN) {
-                items.splice(index, 1);
-                renderInputs();
-            }
-        }
-
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
-        }
-
-        // --- Roulette Drawing ---
-        function drawRoulette() {
-            const canvasSize = rouletteCanvas.width;
-            const centerX = canvasSize / 2;
-            const centerY = canvasSize / 2;
-            const radius = canvasSize * 0.42; // Slightly larger
-            
-            ctx.clearRect(0, 0, canvasSize, canvasSize);
-            
-            const petalCount = items.length;
-            const anglePerPetal = (Math.PI * 2) / petalCount;
-            const centerCircleRadius = radius * 0.3;
-
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(rotation);
-
-            // Draw Petals (Daisy Style - No Overlap)
-            for (let i = 0; i < petalCount; i++) {
-                const startAngle = i * anglePerPetal;
-                
-                ctx.save();
-                ctx.rotate(startAngle + anglePerPetal / 2);
-                
-                // Draw petal shape
-                // We want the petal to stay within the slice.
-                // The width of the petal at distance r is approx r * anglePerPetal.
-                // We use a rounded shape that tapers toward the center.
-                
-                const petalAngle = anglePerPetal / 2;
-                
-                ctx.beginPath();
-                // Start from the inner circle, left side of the wedge
-                ctx.moveTo(centerCircleRadius * Math.cos(-petalAngle), centerCircleRadius * Math.sin(-petalAngle));
-                
-                // Line toward the tip, but stopping short to allow for rounding
-                const tipStartRadius = radius * 0.75;
-                ctx.lineTo(tipStartRadius * Math.cos(-petalAngle), tipStartRadius * Math.sin(-petalAngle));
-                
-                // Rounded tip: A curve that spans the full width of the wedge
-                // We use a quadratic curve or arc to create a nice rounded end that touches the neighbors
-                const controlX = radius * 1.1; // Bulge out slightly for a plush look
-                const controlY = 0;
-                const endX = tipStartRadius * Math.cos(petalAngle);
-                const endY = tipStartRadius * Math.sin(petalAngle);
-                
-                ctx.quadraticCurveTo(controlX, controlY, endX, endY);
-                
-                // Line back to the inner circle, right side of the wedge
-                ctx.lineTo(centerCircleRadius * Math.cos(petalAngle), centerCircleRadius * Math.sin(petalAngle));
-                
-                // Close the path along the center circle
-                ctx.arc(0, 0, centerCircleRadius, petalAngle, -petalAngle, true);
-                ctx.closePath();
-                
-                ctx.fillStyle = PETAL_COLORS[i % PETAL_COLORS.length];
-                ctx.fill();
-                
-                // Petal border
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 4;
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-
-                // Draw Text
-                ctx.fillStyle = '#5a4a42';
-                
-                // Calculate position: middle of the petal's radial line
-                const textCenterX = centerCircleRadius + (radius - centerCircleRadius) * 0.55; 
-                
-                // Adjust font size based on petal width at the text center
-                const petalWidthAtCenter = textCenterX * 2 * Math.sin(anglePerPetal / 2);
-                let fontSize = canvasSize * 0.04;
-                if (fontSize > petalWidthAtCenter * 0.6) {
-                    fontSize = petalWidthAtCenter * 0.6; // Scale down if petal is too narrow
-                }
-                
-                ctx.font = `bold ${fontSize}px 'Zen Maru Gothic'`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                const displayText = items[i] || "";
-                const maxTextWidth = radius * 0.9 - centerCircleRadius * 1.1; // Prevent going into center or out of tip
-                
-                ctx.fillText(displayText, textCenterX, 0, maxTextWidth);
-                
-                ctx.restore();
-            }
-
-            // Draw Center Circle
-            ctx.beginPath();
-            ctx.arc(0, 0, centerCircleRadius, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff3b0'; // Yellow fill
-            ctx.fill();
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 6;
-            ctx.stroke();
-
-            ctx.restore();
-        }
-
-        // --- Audio Logic ---
-        let audioCtx = null;
-        let musicInterval = null;
-        const melody = [523.25, 659.25, 783.99, 1046.50, 783.99, 659.25]; // C5, E5, G5, C6, G5, E5 (Cute arpeggio)
-        let noteIndex = 0;
-
-        function startCuteMusic() {
-            if (!soundEnabled) return;
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            noteIndex = 0;
-            musicInterval = setInterval(() => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
-                osc.type = 'sine'; // Soft, cute tone like a music box
-                osc.frequency.value = melody[noteIndex % melody.length];
-                
-                // Pluck envelope
-                gain.gain.setValueAtTime(0, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-                
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.3);
-                
-                noteIndex++;
-            }, 120); // Fast tempo
-        }
-
-        function stopCuteMusic() {
-            if (musicInterval) {
-                clearInterval(musicInterval);
-                musicInterval = null;
-            }
-        }
-
-        function playWinSound() {
-            if (!soundEnabled) return;
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Play a bright Cmaj7 chord
-            const chord = [523.25, 659.25, 783.99, 987.77]; 
-            chord.forEach((freq, i) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
-                osc.type = 'triangle';
-                osc.frequency.value = freq;
-                
-                gain.gain.setValueAtTime(0, audioCtx.currentTime + i * 0.05);
-                gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + i * 0.05 + 0.1);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
-                
-                osc.start(audioCtx.currentTime + i * 0.05);
-                osc.stop(audioCtx.currentTime + 1.5);
-            });
-        }
-
-        // --- Spin Animation ---
-        let spinStartTime = 0;
-        let spinDuration = 0;
-        let startRotation = 0;
-        let totalRotationToApply = 0;
-
-        function startSpin() {
-            if (isSpinning) return;
-            
-            // Reset particles
-            clearParticles();
-            resultOverlay.classList.remove('active');
-
-            isSpinning = true;
-            spinBtn.disabled = true;
-            
-            // Disable all inputs
-            const allInputs = document.querySelectorAll('.item-input, .remove-btn, .add-btn');
-            allInputs.forEach(el => {
-                if (el.tagName === 'INPUT') el.disabled = true;
-                else el.style.pointerEvents = 'none';
-                el.style.opacity = '0.6';
-            });
-            
-            startRotation = rotation % (Math.PI * 2);
-            spinDuration = 3000 + Math.random() * 2000; // 3-5 seconds
-            
-            // Ensure multiple full rotations + random offset
-            const extraRotations = 5 + Math.floor(Math.random() * 5);
-            totalRotationToApply = extraRotations * Math.PI * 2 + Math.random() * Math.PI * 2;
-            
-            spinStartTime = performance.now();
-            startCuteMusic();
-            requestAnimationFrame(updateSpin);
-        }
-
-        function updateSpin(timestamp) {
-            const elapsed = timestamp - spinStartTime;
-            const progress = Math.min(elapsed / spinDuration, 1);
-            
-            // Easing function: Ease-in-out or custom for roulette
-            // Custom easing: ease-in -> constant -> ease-out
-            // Simplified: easeInOutQuad
-            const easedProgress = progress < 0.2 
-                ? (progress / 0.2) * (progress / 0.2) * 0.1 // Ease in (first 20%)
-                : progress < 0.8
-                ? 0.1 + (progress - 0.2) * 1.33 // Linear (middle 60%)
-                : 0.9 + (1 - ( (1 - progress) / 0.2 ) * ( (1 - progress) / 0.2 )) * 0.1; // Ease out (last 20%)
-            
-            // Using a standard smooth cubic easing for better "feel"
-            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-            
-            rotation = startRotation + totalRotationToApply * easeOutCubic;
-
-            drawRoulette();
-
-            if (progress < 1) {
-                requestAnimationFrame(updateSpin);
-            } else {
-                finishSpin();
-            }
-        }
-
-        function finishSpin() {
-            isSpinning = false;
-            spinBtn.disabled = false;
-            
-            // Re-enable all inputs
-            const allInputs = document.querySelectorAll('.item-input, .remove-btn, .add-btn');
-            allInputs.forEach(el => {
-                if (el.tagName === 'INPUT') el.disabled = false;
-                else el.style.pointerEvents = 'auto';
-                el.style.opacity = '1';
-            });
-
-            stopCuteMusic();
-            playWinSound();
-            
-            // Determine result
-            // Pointer is at the top (angle -Math.PI / 2)
-            const normalizedRotation = (rotation % (Math.PI * 2));
-            const anglePerPetal = (Math.PI * 2) / items.length;
-            
-            // The pointer points to the petal at index:
-            // rotation is clockwise. 0 rotation means index 0 is at 3 o'clock.
-            // Pointer is at 12 o'clock (-PI/2).
-            // (PointerAngle - rotation) % 2PI
-            let targetAngle = (-Math.PI / 2 - rotation) % (Math.PI * 2);
-            if (targetAngle < 0) targetAngle += Math.PI * 2;
-            
-            const winnerIndex = Math.floor(targetAngle / anglePerPetal);
-            const winner = items[winnerIndex];
-            
-            resultText.textContent = winner;
-            resultOverlay.classList.add('active');
-            
-            startParticles();
-        }
-
-        // --- Particle System (Flowers) ---
-        let particles = [];
-        let pAnimationId = null;
-        const flowerImages = {};
-
-        // Pre-render flower particles for better performance
-        function initFlowerImages() {
-            PETAL_COLORS.forEach(color => {
-                const canvas = document.createElement('canvas');
-                const size = 60; // Render size
-                canvas.width = size;
-                canvas.height = size;
-                const ctx = canvas.getContext('2d');
-                const cx = size / 2;
-                const cy = size / 2;
-                const petalCount = 8; // Fixed 8 petals for particles
-                const radius = size * 0.45;
-                const centerRadius = radius * 0.3;
-                
-                ctx.translate(cx, cy);
-                
-                // Draw Petals
-                for (let i = 0; i < petalCount; i++) {
-                    ctx.save();
-                    ctx.rotate(i * (Math.PI * 2) / petalCount);
-                    
-                    const petalAngle = (Math.PI * 2) / petalCount / 2;
-                    ctx.beginPath();
-                    ctx.moveTo(centerRadius * Math.cos(-petalAngle), centerRadius * Math.sin(-petalAngle));
-                    const tipRadius = radius * 0.75;
-                    ctx.lineTo(tipRadius * Math.cos(-petalAngle), tipRadius * Math.sin(-petalAngle));
-                    ctx.quadraticCurveTo(radius * 1.1, 0, tipRadius * Math.cos(petalAngle), tipRadius * Math.sin(petalAngle));
-                    ctx.lineTo(centerRadius * Math.cos(petalAngle), centerRadius * Math.sin(petalAngle));
-                    ctx.arc(0, 0, centerRadius, petalAngle, -petalAngle, true);
-                    ctx.closePath();
-                    
-                    ctx.fillStyle = color;
-                    ctx.fill();
-                    ctx.strokeStyle = 'white';
-                    ctx.lineWidth = 2;
-                    ctx.lineJoin = 'round';
-                    ctx.stroke();
-                    ctx.restore();
-                }
-                
-                // Draw Center Circle
-                ctx.beginPath();
-                ctx.arc(0, 0, centerRadius, 0, Math.PI * 2);
-                ctx.fillStyle = '#fff3b0';
-                ctx.fill();
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                flowerImages[color] = canvas;
-            });
-        }
+        const STORAGE_KEY = 'tile_roulette_randomizer_x_v32';
+        const MIN_ENTRIES = 5;
+        const MAX_ENTRIES = 10;
+        const MAX_CHARS = 10;
         
-        initFlowerImages();
+        let items = ["ITEM_01", "ITEM_02", "ITEM_03", "ITEM_04", "ITEM_05", "ITEM_06", "ITEM_07", "ITEM_08", "ITEM_09", "ITEM_10"];
+        let inputIndices = [7, 8, 9, 10, 11, 13, 14, 15, 16, 17]; 
 
-        class FlowerParticle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * particleCanvas.width;
-                this.y = particleCanvas.height + 50; // Start below screen
-                this.size = 20 + Math.random() * 30; // Random sizes
-                this.speedX = (Math.random() - 0.5) * 8; // Wider horizontal spread
-                this.speedY = -(18 + Math.random() * 12); // High initial burst to fly up
-                this.rotation = Math.random() * Math.PI * 2;
-                this.rotationSpeed = (Math.random() - 0.5) * 0.15;
-                this.color = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
-                this.stopped = false;
-                
-                // Sway mechanics
-                this.swaySpeed = 0.02 + Math.random() * 0.03;
-                this.swayAmount = 1 + Math.random() * 3;
-                this.time = Math.random() * 100;
-            }
-            update() {
-                if (this.stopped) return;
-                
-                this.time += 1;
-                // Add sway to horizontal movement
-                this.x += this.speedX + Math.sin(this.time * this.swaySpeed) * this.swayAmount;
-                this.y += this.speedY;
-                this.rotation += this.rotationSpeed;
-                
-                // Gravity / Air resistance
-                this.speedY += 0.25; // Gravity pulling it back down
-                this.speedX *= 0.98; // Friction
-                
-                // Settle at the bottom
-                const groundLevel = particleCanvas.height - this.size / 2;
-                if (this.y > groundLevel && this.speedY > 0) {
-                    this.y = groundLevel;
-                    this.stopped = true;
-                }
-            }
-            draw() {
-                pCtx.save();
-                pCtx.translate(this.x, this.y);
-                pCtx.rotate(this.rotation);
-                
-                // Draw pre-rendered flower
-                const img = flowerImages[this.color];
-                if (img) {
-                    pCtx.drawImage(img, -this.size / 2, -this.size / 2, this.size, this.size);
-                }
-                
-                pCtx.restore();
+        const gridContainer = document.getElementById('grid');
+
+        let audioCtx = null;
+        function initAudio() { 
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playTick() {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.04);
+        }
+
+        function playWin() {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            const now = audioCtx.currentTime;
+            const osc1 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            osc1.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(300, now);
+            osc1.frequency.exponentialRampToValueAtTime(1200, now + 0.4);
+            gain1.gain.setValueAtTime(0.08, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+            osc1.connect(gain1);
+            gain1.connect(audioCtx.destination);
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
+            osc2.type = 'square';
+            osc2.frequency.setValueAtTime(600, now);
+            osc2.frequency.setValueAtTime(900, now + 0.1);
+            osc2.frequency.setValueAtTime(1200, now + 0.2);
+            gain2.gain.setValueAtTime(0.05, now);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc1.start(); osc2.start();
+            osc1.stop(now + 0.5); osc2.stop(now + 0.5);
+        }
+
+        function init() {
+            loadItems();
+            createGrid();
+            updateUIState();
+        }
+
+        function loadItems() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try { items = JSON.parse(saved); } catch (e) {}
             }
         }
 
-        function startParticles() {
-            particles = [];
-            // Create a burst of particles
-            for (let i = 0; i < 50; i++) {
-                particles.push(new FlowerParticle());
+        function saveItems() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+
+        function createGrid() {
+            gridContainer.innerHTML = '';
+            const totalBlocks = 30; 
+
+            for (let i = 0; i < totalBlocks; i++) {
+                const block = document.createElement('div');
+                block.className = 'block';
+                const inner = document.createElement('div');
+                inner.className = 'block-inner';
+                const idTag = document.createElement('div');
+                idTag.className = 'id-tag';
+                idTag.innerText = `ID: 0${(i+1).toString().padStart(2, '0')}`;
+                inner.appendChild(idTag);
+                if (inputIndices.includes(i)) {
+                    const itemIdx = inputIndices.indexOf(i);
+                    block.classList.add('input-block');
+                    const editable = document.createElement('div');
+                    editable.className = 'editable-area';
+                    editable.contentEditable = true;
+                    editable.innerText = items[itemIdx] || '';
+                    editable.addEventListener('input', (e) => {
+                        let text = editable.innerText;
+                        if (text.length > MAX_CHARS) {
+                            editable.innerText = text.substring(0, MAX_CHARS);
+                            const range = document.createRange();
+                            const sel = window.getSelection();
+                            range.selectNodeContents(editable);
+                            range.collapse(false);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        }
+                        items[itemIdx] = editable.innerText;
+                        saveItems();
+                        updateUIState();
+                    });
+                    editable.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') e.preventDefault();
+                    });
+                    const deleteBtn = document.createElement('div');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.onclick = (e) => {
+                        editable.innerText = '';
+                        items[itemIdx] = '';
+                        saveItems();
+                        updateUIState();
+                    };
+                    inner.appendChild(deleteBtn);
+                    inner.appendChild(editable);
+                }
+                block.appendChild(inner);
+                gridContainer.appendChild(block);
             }
-            if (pAnimationId) cancelAnimationFrame(pAnimationId);
-            updateParticles();
         }
 
-        function updateParticles() {
-            pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-            let allStopped = true;
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-                if (!p.stopped) allStopped = false;
+        function getValidBlocks() {
+            const valid = [];
+            document.querySelectorAll('.input-block .editable-area').forEach(el => {
+                if (el.innerText.trim() !== '') valid.push(el.parentElement.parentElement);
             });
-            
-            pAnimationId = requestAnimationFrame(updateParticles);
+            return valid;
         }
 
-        function clearParticles() {
-            particles = [];
-            pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-            if (pAnimationId) {
-                cancelAnimationFrame(pAnimationId);
-                pAnimationId = null;
+        function updateUIState() {
+            const validBlocks = getValidBlocks();
+            const count = validBlocks.length;
+            const startBtn = document.getElementById('start-btn');
+            if (startBtn) {
+                if (count < MIN_ENTRIES) {
+                    startBtn.classList.add('disabled');
+                    startBtn.innerText = `${count}/${MIN_ENTRIES}`;
+                } else {
+                    startBtn.classList.remove('disabled');
+                    startBtn.innerText = 'START';
+                }
             }
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.style.visibility = count > MIN_ENTRIES ? 'visible' : 'hidden';
+            });
         }
 
-        // Init the app
+        document.getElementById('start-btn').addEventListener('click', () => {
+            if (getValidBlocks().length >= MIN_ENTRIES) {
+                initAudio();
+                startRoulette();
+            }
+        });
+
+        function startRoulette() {
+            gridContainer.classList.add('is-playing');
+            const validBlocks = getValidBlocks();
+            document.querySelectorAll('.block').forEach(b => b.classList.remove('winner', 'active'));
+            let speed = 180; 
+            let totalSteps = 22 + Math.floor(Math.random() * 8);
+            let currentStep = 0;
+            function tick() {
+                validBlocks.forEach(b => b.classList.remove('active'));
+                const target = validBlocks[currentStep % validBlocks.length];
+                target.classList.add('active');
+                playTick();
+                currentStep++;
+                if (currentStep < totalSteps) {
+                    if (currentStep < totalSteps * 0.4) speed = Math.max(50, speed - 25);
+                    else if (currentStep > totalSteps * 0.6) speed += 75;
+                    setTimeout(tick, speed);
+                } else {
+                    finishRoulette(target);
+                }
+            }
+            tick();
+        }
+
+        function finishRoulette(winnerBlock) {
+            winnerBlock.classList.remove('active');
+            winnerBlock.classList.add('winner');
+            gridContainer.classList.remove('is-playing');
+            playWin();
+        }
+
         init();
     </script>
 </body>
